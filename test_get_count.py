@@ -3,10 +3,10 @@
 """
 from models import storage
 from models.state import State
-from models.city import City
+from models.user import User
 
 print("All objects: {}".format(storage.count()))
 print("State objects: {}".format(storage.count(State)))
 
-first_state_id = list(storage.all(City).values())[0].id
-print("First state: {}".format(storage.get(City, first_state_id)))
+first_state_id = list(storage.all(User).values())[0].id
+print("First state: {}".format(storage.get(User, first_state_id)))
