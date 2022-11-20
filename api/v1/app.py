@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """Inintialize APIs"""
 from os import getenv
-from Flask import Flask, Blueprint, jsonify
+from flask import Flask, Blueprint, jsonify
 from models import storage
 from api.v1.views import app_views
 from flask_cors import CORS
@@ -20,7 +20,7 @@ def tear_down(error):
     storage.close()
 
 
-@pp.errorhandler(404)
+@app.errorhandler(404)
 def not_found(message):
     """Handler for 404 errors.
            Parameters:
@@ -29,7 +29,7 @@ def not_found(message):
                The HTTP response.
     """
     response = jsonify({"error": "Not found"})
-    response.satus_code = 404
+    response.status_code = 404
     return response
 
 
