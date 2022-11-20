@@ -106,5 +106,5 @@ def update_state(state_id):
             response = jsonify({'error': error_message})
             response.status_code = 400
             return response
-
-      abort(404)
+    else:
+        abort(404)
