@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """Routes for States API"""
-from models import storage 
+from models import storage
 from flask import jsonify, request, abort
 from api.v1.views import app_views
 from models.state import State
@@ -35,7 +35,8 @@ def get_state(state_id):
         abort(404)
 
 
-@app_views.route('/states/<state_id>', methods=['DELETE'], strict_slashes=False)
+@app_views.route('/states/<state_id>', methods=['DELETE'],
+                 strict_slashes=False)
 def delete_state(state_id):
     """Deletes a specific state.
             Parameters:
