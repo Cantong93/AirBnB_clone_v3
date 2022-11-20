@@ -66,17 +66,17 @@ def create_user():
         return make_response(jsonify({'error': 'Not a JSON'}), 400)
     content = request.get_json(silent=True)
     if "email" in content.keys() and "password" in content.keys():
-            user = User(**content)
-            # storage.new(user)
-            # storage.save()
-            user.save()
-            return make_response(jsonify(user.to_dict()), 201)
+        user = User(**content)
+        # storage.new(user)
+        # storage.save()
+        user.save()
+        return make_response(jsonify(user.to_dict()), 201)
     else:
         if "email" not in content.keys():
             return make_response(jsonify({'error': 'Missing email'}), 400)
         if "password" not in content.keys():
             return make_response(jsonify({'error': 'Missing password'}), 400)
-        
+
 
 @app_views.route('/users/<user_id>/', methods=['PUT'], strict_slashes=False)
 def update_user(user_id):
