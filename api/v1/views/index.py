@@ -11,8 +11,8 @@ from models.state import State
 from models.user import User
 
 all_obj = {
-        "amenities": Amenity
-        "cities": City
+        "amenities": Amenity,
+        "cities": City,
         "places": Place,
         "reviews": Review,
         "states": State,
