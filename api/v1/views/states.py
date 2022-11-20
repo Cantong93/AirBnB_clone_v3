@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """Routes for States API"""
 from models import storage
-from flask import jsonify, request, abort
+from flask import jsonify, request, abort, make_response
 from api.v1.views import app_views
 from models.state import State
 
@@ -12,9 +12,8 @@ def get_states():
            Returns:
                A list of JSON disctionaries of all states.
     """
-    states = list(storage.all('State').values())
     states_list = []
-    for state in states:
+    for state in storage.all(State).values():
         states_list.append(state.to_dict())
     return jsonify(states_list)
 
@@ -28,7 +27,7 @@ def get_state(state_id):
                A JSON dictionary of the state in a 200 response
                A 404 response if the id does not match
     """
-    state = storage.get('State', state_id)
+    state = storage.get(State, state_id)
     if state:
         return jsonify(state.to_dict())
     else:
@@ -45,7 +44,7 @@ def delete_state(state_id):
                 An empty JSON dictionary in a 200 response.
                 a 404 response if the id does not match.
     """
-    state = storage.get('State', state_id)
+    state = storage.get(State, state_id)
     if state:
         storage.delete(state)
         storage.save()
@@ -66,8 +65,9 @@ def create_state():
     if type(content) is dict:
         if "name" in content.keys():
             state = State(**content)
-            storage.new(State)
-            storage.save()
+            # storage.save()
+            # storage.new(State)
+            state.save()
             response = jsonify(state.to_dict())
             response.status_code = 201
             return response
@@ -91,21 +91,15 @@ def update_state(state_id):
                A 400 response if not a valid JSON
                A 404 response if the id does not match
     """
-    state = storage.get('State', state_id)
-    error_message = ""
-    if state:
-        content = request.get_json(silent=True)
-        if type(content) is dict:
-            ignore = ['id', 'created_at', 'updated_at']
-            for name, value in content.items():
-                if name not in ignore:
-                    setaddr(state, name, value)
-            storage.save()
-            return jsonify(state.to_dict())
-        else:
-            error_message = "Not a JSON"
-            response = jsonify({'error': error_message})
-            response.status_code = 400
-            return response
-    else:
+    ignore = ['id', 'updated_at', 'created_at']
+    state = storage.get(State, state_id)
+    if state is None:
         abort(404)
+    if request.get_json is None:
+        return make_response(jsonify({'error': 'Not a JSON'}), 400)
+    update_cnt = request.get_json(silent=True)
+    for key, value in update_cnt.items():
+        if key not in ignore:
+            setattr(state, key, value)
+    state.save()
+    return jsonify(state.to_dict())
