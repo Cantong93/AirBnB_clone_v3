@@ -76,7 +76,7 @@ def create_state():
     else:
         error_message = "Not a JSON"
 
-    response = jsonify({'error': error_message})
+    response = jsonify(error_message)
     response.status_code = 400
     return response
 
@@ -96,7 +96,7 @@ def update_state(state_id):
     if state is None:
         abort(404)
     if request.get_json is None:
-        return make_response(jsonify({'error': 'Not a JSON'}), 400)
+        return make_response(jsonify('Not a JSON'), 400)
     update_cnt = request.get_json(silent=True)
     for key, value in update_cnt.items():
         if key not in ignore:
