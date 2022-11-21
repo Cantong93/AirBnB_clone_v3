@@ -14,7 +14,7 @@ def get_places(city_id):
        Returns:
            A list of JSON dictionaries of all places in a city
     """
-    city = storage.get('City', city_id)
+    city = storage.get(City, city_id)
     places_list = []
     if city:
         for place in city.places:
@@ -32,7 +32,7 @@ def get_place(place_id):
        Returns:
            JSON dictionary of place
     """
-    place = storage.get('Place', place_id)
+    place = storage.get(Place, place_id)
     if place:
         return jsonify(place.to_dict())
     else:
@@ -47,7 +47,7 @@ def delete_place(place_id):
        Returns:
            Empty JSON dictionary if successful otherwise 404 error
     """
-    place = storage.get('Place', place_id)
+    place = storage.get(Place, place_id)
     if place:
         storage.delete(place)
         storage.save()
@@ -64,13 +64,13 @@ def create_place(city_id):
        Returns:
            JSON dictionary of place if successful
     """
-    city = storage.get('City', city_id)
+    city = storage.get(City, city_id)
     error_message = ""
     if city:
         content = request.get_json(silent=True)
         if type(content) is dict:
             if "user_id" in content.keys():
-                user = storage.get('User', content['user_id'])
+                user = storage.get(User, content['user_id'])
                 if user:
                     if "name" in content.keys():
                         place = Place(**content)
@@ -104,7 +104,7 @@ def update_place(place_id):
        Returns:
            JSON dictionary of place if successful
     """
-    place = storage.get('Place', place_id)
+    place = storage.get(Place, place_id)
     if place:
         content = request.get_json(silent=True)
         if type(content) is dict:
