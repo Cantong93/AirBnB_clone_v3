@@ -20,9 +20,9 @@ def get_amenities_by_place(place_id):
         A list of JSON dictionaries of all amenities in a 200 response
     """
     amenities_list = []
-    place = storage.get(Place, place_id)
+    place = storage.get("Place", place_id
     if place:
-        for amenity in place.amenities:
+        for amenity in storage.all(place.amenities).values():
             amenities_list.append(amenity.to_dict())
         return jsonify(amenities_list)
     else:
@@ -45,7 +45,7 @@ def delete_place_amenity(place_id, amenity_id):
     """
     place = storage.get(Place, place_id)
     if place:
-        amenity = storage.get(Amenity, amenity_id)
+        amenity = storage.get("Amenity", amenity_id)
         if amenity:
             if amenity in place.amenities:
                 place.amenities.remove(amenity)
@@ -75,7 +75,7 @@ def create_place_amenity(place_id, amenity_id):
     """
     place = storage.get(Place, place_id)
     if place:
-        amenity = storage.get(Amenity, amenity_id)
+        amenity = storage.get("Amenity", amenity_id)
         if amenity:
             if amenity in place.amenities:
                 return jsonify(amenity.to_dict())
