@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """API routes for Places"""
 from models import storage
-from flask import jsonify, request, abort
+from flask import jsonify, request, abort, make_response
 from api.v1.views import app_views
 from models.place import Place
 from models.city import City
@@ -101,13 +101,15 @@ def update_place(place_id):
     place = storage.get(Place, place_id)
     if place is None:
         abort(404)
-    if not request.json:
+    content = request.json(silent=True)
+    if type(content) is not dict:
         return make_response(jsonify('Not a JSON'), 400)
-    for key, value in request.get_json:
+    for key, value in content.items():
         if key not in ignore:
             setattr(place, key, value)
     place.save()
     return make_response(jsonify(place.to_dict()), 200)
+
 
 @app_views.route("/places_search/", methods=["POST"], strict_slashes=False)
 def search_places():
