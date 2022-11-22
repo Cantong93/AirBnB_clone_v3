@@ -63,7 +63,9 @@ def create_user():
     """
     error_message = ""
     if not request.get_json:
-        return make_response(jsonify('Not a JSON'), 400)
+        response = jsonify({"error": "Not a JSON"})
+        response.status_code = 400
+        return response
     content = request.get_json(silent=True)
     if "email" in content.keys() and "password" in content.keys():
         user = User(**content)
