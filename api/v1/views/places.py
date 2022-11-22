@@ -1,16 +1,19 @@
 #!/usr/bin/python3
 """API routes for Places"""
 from models import storage
-from flask import jsonify, request, abort
+from flask import jsonify, request, abort, make_response
 from api.v1.views import app_views
 from models.place import Place
+from models.city import City
+from models.user import User
 
 
-@app_views.route('/cities/<city_id>/places', methods=['GET'], strict_slashes=False)
+@app_views.route('/cities/<city_id>/places', methods=['GET'],
+                 strict_slashes=False)
 def get_places(city_id):
     """Retrieves the list of all Place objects of a City
        Parameters:
-           city_id (str): 
+           city_id (str):
        Returns:
            A list of JSON dictionaries of all places in a city
     """
@@ -39,7 +42,8 @@ def get_place(place_id):
         abort(404)
 
 
-@app_views.route('/places/<place_id>', methods=['DELETE'], strict_slashes=False)
+@app_views.route('/places/<place_id>',
+                 methods=['DELETE'], strict_slashes=False)
 def delete_place(place_id):
     """Deletes a Place object.
        Parameters:
@@ -56,7 +60,8 @@ def delete_place(place_id):
         abort(404)
 
 
-@app_views.route('/cities/<city_id>/places', methods=['POST'], strict_slashes=False)
+@app_views.route('/cities/<city_id>/places',
+                 methods=['POST'], strict_slashes=False)
 def create_place(city_id):
     """Creates a Place.
        Parameters:
@@ -65,35 +70,23 @@ def create_place(city_id):
            JSON dictionary of place if successful
     """
     city = storage.get(City, city_id)
-    error_message = ""
-    if city:
-        content = request.get_json(silent=True)
-        if type(content) is dict:
-            if "user_id" in content.keys():
-                user = storage.get(User, content['user_id'])
-                if user:
-                    if "name" in content.keys():
-                        place = Place(**content)
-                        place.city_id = city_id
-                        storage.new(place)
-                        storage.save()
-                        response = jsonify(place.to_dict())
-                        response.status_code = 201
-                        return response
-                    else:
-                        error_message = "Missing name"
-                else:
-                    abort(404)
-            else:
-                error_message = "Missing user_id"
-        else:
-            error_message = "Not a JSON"
-
-        response = jsonify({"error": error_message})
-        response.status_code = 400
-        return response
-    else:
+    if city is None:
         abort(404)
+    if not request.json:
+        return make_response(jsonify('Not a JSON'), 400)
+    if 'user_id' not in request.json:
+        return make_response(jsonify('Missing user_id'), 400)
+    user_id = request.json.get('user_id')
+    user = storage.get(User, user_id)
+    if user is None:
+        abort(404)
+    if 'name' not in request.json:
+        return make_response(jsonify('Missing name'), 400)
+    content = request.get_json(silent=True)
+    place = Place(**content)
+    place.save()
+    setattr(place, 'city_id', city_id)
+    return make_response(jsonify(place.to_dict()), 201)
 
 
 @app_views.route('/places/<place_id>', methods=['PUT'], strict_slashes=False)
@@ -104,23 +97,18 @@ def update_place(place_id):
        Returns:
            JSON dictionary of place if successful
     """
+    ignore = ['id', 'updated_at', 'created_at', 'user_id', 'city_id']
     place = storage.get(Place, place_id)
-    if place:
-        content = request.get_json(silent=True)
-        if type(content) is dict:
-            ignore = ['id', 'user_id', 'city_id', 'created_at', 'updated_at']
-            for name, value in content.items():
-                if name not in ignore:
-                    setattr(place, name, value)
-            storage.save()
-            return jsonify(place.to_dict())
-
-        else:
-            response = jsonify({"error": "Not a JSON"})
-            response.status_code = 400
-            return response
-    else:
+    if place is None:
         abort(404)
+    content = request.json(silent=True)
+    if type(content) is not dict:
+        return make_response(jsonify({'error': 'Not a JSON'}), 400)
+    for key, value in content.items():
+        if key not in ignore:
+            setattr(place, key, value)
+    place.save()
+    return make_response(jsonify(place.to_dict()), 200)
 
 
 @app_views.route("/places_search/", methods=["POST"], strict_slashes=False)
@@ -181,4 +169,3 @@ def search_places():
         response = jsonify({"error": "Not a JSON"})
         response.status_code = 400
         return response
-
