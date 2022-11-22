@@ -100,7 +100,7 @@ def update_place(place_id):
     place = storage.get(Place, place_id)
     if place:
         content = request.get_json(silent=True)
-        if type(content) is dict:
+        if request.json is not None:
             ignore = ['id', 'user_id', 'city_id', 'created_at', 'updated_at']
             for name, value in content.items():
                 if name not in ignore:
@@ -109,9 +109,7 @@ def update_place(place_id):
             return jsonify(place.to_dict())
 
         else:
-            response = jsonify({"error": "Not a JSON"})
-            response.status_code = 400
-            return response
+            return make_response(jsonify("Not a JSON"), 400)
     else:
         abort(404)
 
