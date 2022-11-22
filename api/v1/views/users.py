@@ -62,7 +62,7 @@ def create_user():
                A 400 response if missing parameters or if not valid JSON
     """
     error_message = ""
-    if not request.get_json:
+    if not request.json:
         return abort(400, {'error': 'Not a JSON'})
     content = request.get_json(silent=True)
     if "email" in content.keys() and "password" in content.keys():
