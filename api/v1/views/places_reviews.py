@@ -132,4 +132,3 @@ def update_review(review_id):
             return response
     else:
         abort(404)
-
