@@ -95,6 +95,8 @@ def update_state(state_id):
     state = storage.get(State, state_id)
     if state is None:
         abort(404)
+    if not request.json:
+        return make_response(jsonify('Not a JSON'), 400)
     if request.get_json is None:
         return make_response(jsonify('Not a JSON'), 400)
     update_cnt = request.get_json(silent=True)
