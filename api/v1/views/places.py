@@ -97,22 +97,17 @@ def update_place(place_id):
        Returns:
            JSON dictionary of place if successful
     """
+    ignore = ['id', 'updated_at', 'created_at', 'user_id', 'city_id']
     place = storage.get(Place, place_id)
-    if place:
-        content = request.get_json(silent=True)
-        if request.json is not None:
-            ignore = ['id', 'user_id', 'city_id', 'created_at', 'updated_at']
-            for name, value in content.items():
-                if name not in ignore:
-                    setattr(place, name, value)
-            storage.save()
-            return jsonify(place.to_dict())
-
-        else:
-            return make_response(jsonify("Not a JSON"), 400)
-    else:
+    if place is None:
         abort(404)
-
+    if request.json is None:
+        return make_response(jsonify('Not a JSON'), 400)
+    for key, value in request.json.items():
+        if key not in ignore:
+            setattr(place, key, value)
+    place.save()
+    return make_response(jsonify(place.to_dict()), 200)
 
 @app_views.route("/places_search/", methods=["POST"], strict_slashes=False)
 def search_places():
