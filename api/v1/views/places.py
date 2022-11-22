@@ -103,7 +103,7 @@ def update_place(place_id):
         abort(404)
     content = request.json(silent=True)
     if type(content) is not dict:
-        return make_response(jsonify('Not a JSON'), 400)
+        return make_response(jsonify({'error': 'Not a JSON'}), 400)
     for key, value in content.items():
         if key not in ignore:
             setattr(place, key, value)
