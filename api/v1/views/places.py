@@ -86,7 +86,7 @@ def create_place(city_id):
     place = Place(**content)
     place.save()
     setattr(place, 'city_id', city_id)
-    return make_response(jsonify(place.to_dict()), 201)
+    return make_response(place.to_json(), 201)
 
 
 @app_views.route('/places/<place_id>', methods=['PUT'], strict_slashes=False)
@@ -108,7 +108,7 @@ def update_place(place_id):
         if key not in ignore:
             setattr(place, key, value)
     place.save()
-    return make_response(jsonify(place.to_dict()), 200)
+    return make_response(jsonify(place.to_json()), 200)
 
 
 @app_views.route("/places_search/", methods=["POST"], strict_slashes=False)
