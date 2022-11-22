@@ -101,9 +101,9 @@ def update_place(place_id):
     place = storage.get(Place, place_id)
     if place is None:
         abort(404)
-    if request.json is None:
+    if not request.json:
         return make_response(jsonify('Not a JSON'), 400)
-    for key, value in request.json.items():
+    for key, value in request.get_json:
         if key not in ignore:
             setattr(place, key, value)
     place.save()
