@@ -158,7 +158,9 @@ Alexa Orrico - [Github](https://github.com/alexaorrico) / [Twitter](https://twit
 
 Jennifer Huang - [Github](https://github.com/jhuang10123) / [Twitter](https://twitter.com/earthtojhuang) 
 
-Alausa Abdulqoyum - [Github](https://github.com/Alausa2001) / [Twitter](https://twitter.com/alausaabdulqoy3)
+Alausa Abdulqoyum - [Github](https://github.com/Alausa2001) / [Twitter](https://twitter.com/alausaabdulqoy3)\
+
+Mason Mapfundematsva - [Github](https://github.com/masonk16) / [Twitter](https://twitter.com/MasonMapfunde)
 
 Second part of Airbnb: Joann Vuong
 ## License
